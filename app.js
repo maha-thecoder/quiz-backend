@@ -9,12 +9,26 @@ const controller=require('./controller/control')
 
 
 
-app.use(express.json())
+
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://quiz-indol-six.vercel.app'  // ✅ no trailing slash!
+];
+
 app.use(cors({
-    origin: ['http://localhost:5173','https://quiz-indol-six.vercel.app/'], // your React app’s URL
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log('Blocked by CORS:', origin);  // 👈 log unallowed origins
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
 }));
+
+app.use(express.json())
 
 app.get('/',(req,res)=>{
     res.send('welcome dude')
