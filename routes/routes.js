@@ -1,4 +1,59 @@
-const {questionsdb,scoredb,aidb} = require('../models/schema')
+ const bcrypt=require('bcrypt')
+ const jwt=require('jsonwebtoken')
+ const Generatetokens=require("../utiles/generatetokens")
+
+const {questionsdb,scoredb,aidb,Userdb} = require('../models/schema')
+
+
+
+const userdbadding=async(req,res)=>{
+    try{
+        const userdata=req.body
+        const addinguser=await Userdb.create(userdata)
+        res.status(200).json(addinguser)
+    }
+    catch{
+        alert(err)
+    }
+}
+
+const userauth=async(req,res)=>{
+    try{
+        const {email,password}=req.body
+
+        const user=await Userdb.findOne({email})
+        if(!user){
+            return res.status(200).json({message:'no user found'})
+        }
+
+        const passismatch=await bcrypt.compare(password,user.password)
+
+        if(!passismatch){
+            return res.status(400).json({message:'invalid password'})
+        }
+
+        const token=Generatetokens(user._id);
+
+        res.status(200).json({
+            message:"login successfull",
+            user:{
+                _id:user._id,
+                name:user.name,
+                email:user.email,
+            },
+            token
+        })
+
+        
+
+
+    }
+
+    catch(err){
+        res.status(500).json({message:"server error",err})
+    }
+}
+
 const quizquesopt=async(req,res)=>{
     try{
     const data = req.body
@@ -75,5 +130,6 @@ const addingai=async(req,res)=>{
 
 
 module.exports={
-    quizquesopt,getquest,gettestname,usertestname,addingscore,addingai
+    quizquesopt,getquest,gettestname,usertestname,addingscore,addingai,
+    userdbadding,userauth
 }
