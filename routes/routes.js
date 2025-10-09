@@ -8,9 +8,22 @@ const {questionsdb,scoredb,aidb,Userdb} = require('../models/schema')
 
 const userdbadding=async(req,res)=>{
     try{
+
         const userdata=req.body
+        const useremail=userdata.email
+
+        const userfind=await Userdb.findOne({email:useremail})
+        if(userfind){
+            return res.status(400).json({message:"user already exist"})
+        }
         const addinguser=await Userdb.create(userdata)
-        res.status(200).json(addinguser)
+        const token=Generatetokens(addinguser._id);
+        res.status(200).json({ user:{
+                _id:addinguser._id,
+                name:addinguser.name,
+                email:addinguser.email,
+            },
+            token})
     }
     catch{
         alert(err)
@@ -23,7 +36,7 @@ const userauth=async(req,res)=>{
 
         const user=await Userdb.findOne({email})
         if(!user){
-            return res.status(200).json({message:'no user found'})
+            return res.status(400).json({message:'no user found'})
         }
 
         const passismatch=await bcrypt.compare(password,user.password)
@@ -43,16 +56,14 @@ const userauth=async(req,res)=>{
             },
             token
         })
-
-        
-
-
     }
 
     catch(err){
         res.status(500).json({message:"server error",err})
     }
 }
+
+
 
 const Proctedroute=async(req,res)=>{
     const auth=req.headers.authorization
