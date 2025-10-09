@@ -54,6 +54,25 @@ const userauth=async(req,res)=>{
     }
 }
 
+const Proctedroute=async(req,res)=>{
+    const auth=req.headers.authorization
+
+    console.log("Authorization header:", req.headers.authorization);
+
+    if(!auth || !auth.startsWith('Bearer ')){
+        res.status(401).json({message: "No token provided" })
+    }
+
+    const token=auth.split(" ")[1]
+
+     try {
+    const decoded = jwt.verify(token, 'JWT_PASSKEY');
+    res.status(200).json({ valid: true, user: decoded });
+  } catch (err) {
+    res.status(401).json({ message: "Invalid or expired token" });
+  }
+}
+
 const quizquesopt=async(req,res)=>{
     try{
     const data = req.body
@@ -131,5 +150,5 @@ const addingai=async(req,res)=>{
 
 module.exports={
     quizquesopt,getquest,gettestname,usertestname,addingscore,addingai,
-    userdbadding,userauth
+    userdbadding,userauth,Proctedroute
 }
