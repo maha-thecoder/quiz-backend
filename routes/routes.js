@@ -83,6 +83,36 @@ const Userdetails=async(req,res)=>{
 }
 
 
+const updatenumberofattempt=async(req,res)=>{
+     try{
+    const {email,testname}=req.params
+
+   
+        const updateattempt=await Userdb.findOneAndUpdate(
+            {email:email},
+            {$inc:{noquizattempted:1},$push:{attemptedquiz:testname}},
+           
+            {new:true}
+           
+        )
+
+         if (!updateattempt) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+     res.status(200).json({
+      message: "Quiz attempt updated successfully",
+      quizAttempt: updateattempt.quizAttempt,
+    });
+    }
+    catch(err){
+        res.status(500).json(err)
+    }
+
+   
+    
+}
+
 const Proctedroute=async(req,res)=>{
     const auth=req.headers.authorization
 
@@ -179,5 +209,5 @@ const addingai=async(req,res)=>{
 
 module.exports={
     quizquesopt,getquest,gettestname,usertestname,addingscore,addingai,
-    userdbadding,userauth,Proctedroute,Userdetails
+    userdbadding,userauth,Proctedroute,Userdetails,updatenumberofattempt
 }
