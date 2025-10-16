@@ -17,6 +17,8 @@ const Userschema=new mongoose.Schema({
     password:String,
     confirmPassword:String,
     termsAccepted:Boolean,
+    noquizattempted:Number,
+    attemptedquiz:[String],
     createdAt:{type:Date,
     default:Date.now
     }

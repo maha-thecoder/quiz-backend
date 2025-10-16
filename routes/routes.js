@@ -64,6 +64,24 @@ const userauth=async(req,res)=>{
 }
 
 
+const Userdetails=async(req,res)=>{
+    try{
+       
+    const {email}=req.params
+    const userdata=await Userdb.findOne({email:email})
+    
+
+    if(userdata){
+        res.status(200).json(userdata)
+    }
+   
+}
+    catch(err){
+        res.status(401).json({err})
+    }
+
+}
+
 
 const Proctedroute=async(req,res)=>{
     const auth=req.headers.authorization
@@ -161,5 +179,5 @@ const addingai=async(req,res)=>{
 
 module.exports={
     quizquesopt,getquest,gettestname,usertestname,addingscore,addingai,
-    userdbadding,userauth,Proctedroute
+    userdbadding,userauth,Proctedroute,Userdetails
 }
