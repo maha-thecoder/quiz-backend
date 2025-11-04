@@ -4,12 +4,15 @@ const {quizquesopt,getquest,gettestname,usertestname,addingscore,addingai,getait
     userauth,Proctedroute,Userdetails,updatenumberofattempt
 }=require('../routes/routes')
 
+const {tokengenerator}=require('../apis/huggingface')
+
 router.route('/signup').post(userdbadding)
 router.route('/signin').post(userauth)
 router.route('/userprofile/:email').get(Userdetails)
 router.route('/addattempt/:email/:testname').patch(updatenumberofattempt)
 router.route('/auth').get(Proctedroute)
 router.route('/').post(quizquesopt).get(getquest)
+router.route('/tokenapi').post(tokengenerator)
 router.route('/quiztopic').get(gettestname)
 router.route('/quiz/:testname').get(usertestname).post(addingscore)
 router.route('/declaration').post(addingai)
