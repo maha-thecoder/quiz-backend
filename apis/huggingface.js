@@ -23,6 +23,7 @@ export const tokengenerator = async (req, res) => {
     });
 
     const data = await response.json();
+    console.log(data.choices[0].message.content)
     res.json(data);
 
   } catch (err) {
