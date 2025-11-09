@@ -74,6 +74,7 @@ const userattemptbiodb=mongoose.model('userattemptbiodb',userbio)
 
 const questionschema=new mongoose.Schema({
     time:Number,
+    noofsubject:Number,
     testname:String,
     subject:[String],
     maxmarks:Number,
@@ -96,6 +97,7 @@ const scoredb=mongoose.model("scoredb",scoreschema)
 
 const aischema=new mongoose.Schema({
     testname:String,
+    noofsubject:Number,
     maxmarks:Number,
     subject:[String],
     time:Number,
