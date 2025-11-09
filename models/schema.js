@@ -40,6 +40,35 @@ Userschema.pre("save",async function (next){
 const Userdb=mongoose.model('Userdb',Userschema)
 
 
+const userbio=new mongoose.Schema({
+    userId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "Userdb",
+    required: true 
+  },
+    
+    userbioattempt:[
+        {
+    attemptedquiz:String,
+    isquizattempt:Boolean,
+    marksobtain:Number,
+    maxmarks:Number,
+    noofattempt:Number,
+    attemptedate:{type:Date,
+        default:Date.now
+    }
+    }
+
+    ]
+
+
+
+
+})
+
+const userattemptbiodb=mongoose.model('userattemptbiodb',userbio)
+
+
 
 
 
@@ -47,6 +76,7 @@ const questionschema=new mongoose.Schema({
     time:Number,
     testname:String,
     subject:[String],
+    maxmarks:Number,
     questions:[{
     question:String,
     opt:[String],
@@ -66,6 +96,9 @@ const scoredb=mongoose.model("scoredb",scoreschema)
 
 const aischema=new mongoose.Schema({
     testname:String,
+    maxmarks:Number,
+    subject:[String],
+    time:Number,
      questions :
      [
         {
@@ -79,4 +112,4 @@ const aischema=new mongoose.Schema({
 })
 
 const aidb =mongoose.model('aidb',aischema)
-module.exports={questionsdb,scoredb,aidb,Userdb}
+module.exports={questionsdb,scoredb,aidb,Userdb,userattemptbiodb}

@@ -1,7 +1,7 @@
 const express=require('express')
 const router=express.Router()
 const {quizquesopt,getquest,gettestname,usertestname,addingscore,addingai,getaitestname,userdbadding,
-    userauth,Proctedroute,Userdetails,updatenumberofattempt
+    userauth,Proctedroute,Userdetails,updatenumberofattempt,userattemptbio,getUserBioAttempt
 }=require('../routes/routes')
 
 const {tokengenerator}=require('../apis/huggingface')
@@ -16,5 +16,6 @@ router.route('/tokenapi').post(tokengenerator)
 router.route('/quiztopic').get(gettestname)
 router.route('/quiz/:testname').get(usertestname).post(addingscore)
 router.route('/declaration').post(addingai)
+router.route('/userbioattempt/:userId').post(userattemptbio).get(getUserBioAttempt)
 
 module.exports=router

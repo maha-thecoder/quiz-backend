@@ -2,7 +2,7 @@
  const jwt=require('jsonwebtoken')
  const Generatetokens=require("../utiles/generatetokens")
 
-const {questionsdb,scoredb,aidb,Userdb} = require('../models/schema')
+const {questionsdb,scoredb,aidb,Userdb,userattemptbiodb} = require('../models/schema')
 
 
 
@@ -24,6 +24,13 @@ const userdbadding=async(req,res)=>{
                 email:addinguser.email,
             },
             token})
+
+        const userbioid=userattemptbiodb.find({userId:userfind._id})
+        if(!userbioid){
+            bio=userattemptbiodb.create({
+                userId:userfind._id
+            })
+        }
     }
     catch{
         alert(err)
@@ -56,6 +63,12 @@ const userauth=async(req,res)=>{
             },
             token
         })
+         const userbioid=userattemptbiodb.find({userId:userfind._id})
+        if(!userbioid){
+            bio=userattemptbiodb.create({
+                userId:userfind._id
+            })
+        }
     }
 
     catch(err){
@@ -205,9 +218,69 @@ const addingai=async(req,res)=>{
 }
 
 
+const userattemptbio = async (req, res) => {
+  try {
+    console.log("api is calling");
+
+    const userId = req.params.userId;
+    const userbiodata = req.body.userbioattempt;
+
+    if (!userId) {
+      return res.status(400).json({ message: "userId is missing" });
+    }
+
+    let findinguser = await userattemptbiodb.findOne({ userId });
+
+    if (!findinguser) {
+      findinguser = await userattemptbiodb.create({
+        userId,
+        userbioattempt: [userbiodata]
+      });
+
+      return res.status(200).json({
+        message: "Bio created and quiz attempt added",
+        data: findinguser,
+      });
+    }
+
+    findinguser.userbioattempt.push(userbiodata);
+    await findinguser.save();
+
+    return res.status(200).json({
+      message: "Quiz attempt added",
+      data: findinguser,
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error", error: err });
+  }
+};
+
+const getUserBioAttempt = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    if (!userId) {
+      return res.status(400).json({ message: "userId is missing" });
+    }
+
+    const findinguser = await userattemptbiodb.findOne({ userId });
+
+    if (!findinguser) {
+      return res.status(200).json({ userbioattempt: [] });
+    }
+
+    return res.status(200).json(findinguser);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error", error: err });
+  }
+};
 
 
 module.exports={
     quizquesopt,getquest,gettestname,usertestname,addingscore,addingai,
-    userdbadding,userauth,Proctedroute,Userdetails,updatenumberofattempt
+    userdbadding,userauth,Proctedroute,Userdetails,updatenumberofattempt,
+    userattemptbio,getUserBioAttempt
 }
